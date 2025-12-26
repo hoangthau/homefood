@@ -1,65 +1,105 @@
-import Image from "next/image";
+'use client';
+
+import { useState, useEffect } from 'react';
+import CreatePost from './components/CreatePost';
+import Newsfeed from './components/Newsfeed';
+
+interface User {
+  id: string;
+  username: string;
+}
 
 export default function Home() {
+  const [user, setUser] = useState<User | null>(null);
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
+  const [isInitializing, setIsInitializing] = useState(true);
+
+  useEffect(() => {
+    // Initialize user (in a real app, this would be from authentication)
+    const initializeUser = async () => {
+      try {
+        // Check if user exists in localStorage
+        let currentUser = localStorage.getItem('currentUser');
+        
+        if (!currentUser) {
+          // Generate a demo user with UUID format
+          const demoUsername = `User${Math.floor(Math.random() * 10000)}`;
+          // Generate a v4-like UUID (simple implementation)
+          const demoUserId = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+            const r = Math.random() * 16 | 0;
+            const v = c === 'x' ? r : (r & 0x3 | 0x8);
+            return v.toString(16);
+          });
+          currentUser = JSON.stringify({ id: demoUserId, username: demoUsername });
+          localStorage.setItem('currentUser', currentUser);
+        }
+        
+        setUser(JSON.parse(currentUser));
+      } catch (error) {
+        console.error('Error initializing user:', error);
+      } finally {
+        setIsInitializing(false);
+      }
+    };
+
+    initializeUser();
+  }, []);
+
+  const handlePostCreated = () => {
+    setRefreshTrigger(prev => prev + 1);
+  };
+
+  if (isInitializing) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-gray-100">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-gray-100">
+        <div className="text-center">
+          <p className="text-red-600 mb-4">Error initializing user</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <main className="flex min-h-screen w-full flex-col bg-gray-100">
+      {/* Header */}
+      <header className="sticky top-0 z-50 w-full bg-white shadow-sm border-b flex justify-center">
+        <div className="max-w-3xl w-full px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
+          <div className="flex items-center justify-between">
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
+              📰 Homefood
+            </h1>
+            
+          </div>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+      </header>
+
+      {/* Main Content */}
+      <div className="flex-1 w-full flex justify-center">
+        <div className="max-w-3xl w-full px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+          {/* Create Post Section */}
+          <CreatePost
+            onPostCreated={handlePostCreated}
+          />
+
+          {/* Newsfeed Section */}
+          <Newsfeed refreshTrigger={refreshTrigger} />
         </div>
-      </main>
-    </div>
+      </div>
+
+      {/* Footer */}
+      <footer className="w-full bg-white border-t mt-8">
+        <div className="max-w-3xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-6 text-center text-gray-500 text-xs sm:text-sm">
+          <p>© 2025 Newsfeed App. Built with Next.js and Supabase.</p>
+        </div>
+      </footer>
+    </main>
   );
 }
