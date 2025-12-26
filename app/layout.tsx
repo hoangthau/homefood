@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Newsfeed App",
+  title: "Find your desire home-cooked meals",
   description: "Share posts and stay connected with your community",
 };
 

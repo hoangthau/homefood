@@ -150,7 +150,7 @@ export default function CreatePost({
         <textarea
           value={content}
           onChange={(e) => setContent(e.target.value)}
-          placeholder="What's on your mind?"
+          placeholder="What's your content?"
           className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none text-sm sm:text-base text-black"
           rows={3}
         />
@@ -171,7 +171,7 @@ export default function CreatePost({
                 <button
                   type="button"
                   onClick={() => removeImage(index)}
-                  className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity text-sm"
+                  className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity text-sm cursor-pointer"
                 >
                   ✕
                 </button>
@@ -189,14 +189,14 @@ export default function CreatePost({
             type="button"
             onClick={() => fileInputRef.current?.click()}
             disabled={isLoading || images.length >= 5}
-            className="w-full sm:flex-1 px-4 py-2 text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed font-medium text-sm sm:text-base"
+            className="w-full sm:flex-1 px-4 py-2 text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer font-medium text-sm sm:text-base"
           >
-            {images.length >= 5 ? '📷 Max 5 images' : '📷 Add Images'}
+            {images.length >= 5 ? '📇 Max 5 images' : '📇 Add Images'}
           </button>
           <button
             type="submit"
             disabled={isLoading || !content.trim()}
-            className="w-full sm:flex-1 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed font-medium text-sm sm:text-base"
+            className="w-full sm:flex-1 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer font-medium text-sm sm:text-base"
           >
             {isLoading ? 'Posting...' : 'Post'}
           </button>
