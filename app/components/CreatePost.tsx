@@ -147,13 +147,16 @@ export default function CreatePost({
     <div className="w-full bg-white rounded-lg shadow-md p-4 sm:p-6 mb-6">
       <form onSubmit={handleSubmit} className="space-y-4">
         {/* Text Content */}
-        <textarea
-          value={content}
-          onChange={(e) => setContent(e.target.value)}
-          placeholder="What's your content?"
-          className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none text-sm sm:text-base text-black"
-          rows={3}
-        />
+        <div>
+          <textarea
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+            placeholder="What's your content? (Supports markdown: **bold**, *italic*, # Heading, etc.)"
+            className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none text-sm sm:text-base text-black"
+            rows={3}
+          />
+          <p className="text-xs text-gray-500 mt-1">Markdown supported</p>
+        </div>
 
         {/* Image Previews */}
         {previewUrls.length > 0 && (
