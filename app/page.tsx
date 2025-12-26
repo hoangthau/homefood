@@ -1,11 +1,18 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import CreatePost from './components/CreatePost';
 import Newsfeed from './components/Newsfeed';
 
 export default function Home() {
   const [refreshTrigger, setRefreshTrigger] = useState(0);
+  const [isAdminMode, setIsAdminMode] = useState(false);
+
+  useEffect(() => {
+    const params = new URLSearchParams(typeof window !== 'undefined' ? window.location.search : '');
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setIsAdminMode(params.get('admin_mode') === 'true');
+  }, []);
 
   const handlePostCreated = () => {
     setRefreshTrigger(prev => prev + 1);
@@ -28,10 +35,12 @@ export default function Home() {
       {/* Main Content */}
       <div className="flex-1 w-full flex justify-center">
         <div className="max-w-3xl w-full px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
-          {/* Create Post Section */}
-          <CreatePost
-            onPostCreated={handlePostCreated}
-          />
+          {/* Create Post Section - Only visible in admin mode */}
+          {isAdminMode && (
+            <CreatePost
+              onPostCreated={handlePostCreated}
+            />
+          )}
 
           {/* Newsfeed Section */}
           <Newsfeed refreshTrigger={refreshTrigger} />
